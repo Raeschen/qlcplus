@@ -45,9 +45,15 @@ class QImage;
 #define KXMLQLCEFXFixtureStartOffset    QStringLiteral("StartOffset")
 #define KXMLQLCEFXFixtureIntensity      QStringLiteral("Intensity")
 
+#define KXMLQLCEFXFixtureCustXM         QStringLiteral("CustomXMSB")
+#define KXMLQLCEFXFixtureCustXL         QStringLiteral("CustomXLSB")
+#define KXMLQLCEFXFixtureCustYM         QStringLiteral("CustomYMSB")
+#define KXMLQLCEFXFixtureCustYL         QStringLiteral("CustomYLSB")
+
 #define KXMLQLCEFXFixtureModePanTilt        QStringLiteral("Position")
 #define KXMLQLCEFXFixtureModeDimmer         QStringLiteral("Dimmer")
 #define KXMLQLCEFXFixtureModeRGB            QStringLiteral("RGB")
+#define KXMLQLCEFXFixtureModeCustom         QStringLiteral("Custom")
 
 class EFXFixture final
 {
@@ -58,7 +64,8 @@ public:
     {
         PanTilt,
         Dimmer,
-        RGB
+        RGB,
+        Custom
     };
 
     /*************************************************************************
@@ -116,16 +123,47 @@ public:
     bool isValid() const;
 
     void durationChanged();
+	
+	void setCustXMSB(quint32 value);
+	void setCustXLSB(quint32 value);
+	
+	void setCustYMSB(quint32 value);
+	void setCustYLSB(quint32 value);
 
 public:
     /** Get the supported mode for this fixture in a string list */
     QStringList modeList() const;
-
+	
+	/** Channels count */
+	int channels();
+	
+	/** List of channel names for this fixture in a string list */
+	QStringList channelList() const;
+	
+	/** Channel ID to string name and vice versa */
+	QString channelToString(quint32 channel);
+	quint32 stringtoChannel(QString channel);
+	
+	/** Get the QLCChannel from this EFX Fixture */
+	const QLCChannel* getChannel(quint32 channel) const;
+	
     /** Convert a mode to a string */
     static QString modeToString(Mode algo);
 
     /** Convert a string to an mode type */
     static Mode stringToMode(const QString& str);
+	
+	quint32 firstMSBChannel();
+	quint32 firstLSBChannel();
+	
+	quint32 secondMSBChannel();
+	quint32 secondLSBChannel();
+	
+	quint32 custXMSB();
+	quint32 custXLSB();
+	
+	quint32 custYMSB();
+	quint32 custYLSB();
 
 private:
     GroupHead m_head;
@@ -133,6 +171,8 @@ private:
     Function::Direction m_direction;
     int m_startOffset;
     Mode m_mode;
+	
+	void getEFXChannels();
 
     /*************************************************************************
      * Load & Save
@@ -213,6 +253,11 @@ private:
     quint32 m_firstLsbChannel;
     quint32 m_secondMsbChannel;
     quint32 m_secondLsbChannel;
+	
+	quint32 m_custXMsbChannel;
+    quint32 m_custXLsbChannel;
+    quint32 m_custYMsbChannel;
+    quint32 m_custYLsbChannel;
 
     /** Intensity channel cache used when the EFX has dimmer control enabled
         (pan/tilt use the channels above) */

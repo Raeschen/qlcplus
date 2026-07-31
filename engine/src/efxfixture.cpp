@@ -58,6 +58,11 @@ EFXFixture::EFXFixture(const EFX* parent)
     , m_firstLsbChannel(QLCChannel::invalid())
     , m_secondMsbChannel(QLCChannel::invalid())
     , m_secondLsbChannel(QLCChannel::invalid())
+    
+    , m_custXMsbChannel(QLCChannel::invalid())
+    , m_custXLsbChannel(QLCChannel::invalid())
+    , m_custYMsbChannel(QLCChannel::invalid())
+    , m_custYLsbChannel(QLCChannel::invalid())
 
     , m_intensityMsbChannel(QLCChannel::invalid())
     , m_intensityLsbChannel(QLCChannel::invalid())
@@ -84,6 +89,11 @@ void EFXFixture::copyFrom(const EFXFixture* ef)
     m_started = ef->m_started;
     m_elapsed = ef->m_elapsed;
     m_currentAngle = ef->m_currentAngle;
+	
+	m_custXMsbChannel = ef->m_custXMsbChannel;
+	m_custXLsbChannel = ef->m_custXLsbChannel;
+	m_custYMsbChannel = ef->m_custYMsbChannel;
+	m_custYLsbChannel = ef->m_custYLsbChannel;
 }
 
 EFXFixture::~EFXFixture()
@@ -117,6 +127,8 @@ void EFXFixture::setHead(GroupHead const & head)
     if (fxi->rgbChannels(head.head).size() >= 3)
         modes << RGB;
 
+    modes << Custom;
+    
     if (!modes.contains(m_mode))
     {
         if (modes.size() > 0)
@@ -210,6 +222,26 @@ void EFXFixture::durationChanged()
     }
 }
 
+void EFXFixture::setCustXMSB(quint32 value)
+{
+	m_custXMsbChannel = value;
+}
+
+void EFXFixture::setCustXLSB(quint32 value)
+{
+	m_custXLsbChannel = value;
+}
+
+void EFXFixture::setCustYMSB(quint32 value)
+{
+	m_custYMsbChannel = value;
+}
+
+void EFXFixture::setCustYLSB(quint32 value)
+{
+	m_custYLsbChannel = value;
+}
+
 QStringList EFXFixture::modeList() const
 {
     Fixture* fxi = doc()->fixture(head().fxi);
@@ -228,7 +260,81 @@ QStringList EFXFixture::modeList() const
     if (fxi->rgbChannels(head().head).size() >= 3)
         modes << KXMLQLCEFXFixtureModeRGB;
 
+    modes << KXMLQLCEFXFixtureModeCustom;
+
     return modes;
+}
+
+int EFXFixture::channels()
+{
+	Fixture* fxi = doc()->fixture(head().fxi);
+    Q_ASSERT(fxi != NULL);
+	
+	return int(fxi->channels());
+}
+
+QStringList EFXFixture::channelList() const
+{
+    Fixture* fxi = doc()->fixture(head().fxi);
+    Q_ASSERT(fxi != NULL);
+
+    QStringList channels;
+
+    for (quint32 i = 0; i < fxi->channels(); i++)
+	{
+		const QLCChannel* c = fxi->channel(i);
+		Q_ASSERT(c != NULL);
+		channels << c->name();
+	}
+	channels << QString("NONE");
+
+    return channels;
+}
+
+QString EFXFixture::channelToString(quint32 channel)
+{
+	Fixture* fxi = doc()->fixture(head().fxi);
+    Q_ASSERT(fxi != NULL);
+	
+	QString schannel = "NONE";
+	
+	if(channel < fxi->channels())
+	{
+		const QLCChannel* c = fxi->channel(channel);
+		Q_ASSERT(c != NULL);
+		schannel = c->name();
+	}
+	
+	return schannel;
+}
+
+quint32 EFXFixture::stringtoChannel(QString channel)
+{
+	Fixture* fxi = doc()->fixture(head().fxi);
+    Q_ASSERT(fxi != NULL);
+	
+	quint32 ichannel = QLCChannel::invalid();
+	
+	for (quint32 i = 0; i < fxi->channels(); i++)
+	{
+		const QLCChannel* c = fxi->channel(i);
+		if ((c != NULL) && (c->name() == channel))
+		{
+			ichannel = i;
+			break;
+		}
+	}
+	return ichannel;
+}
+
+const QLCChannel* EFXFixture::getChannel(quint32 channel) const
+{
+	Fixture* fxi = doc()->fixture(head().fxi);
+    Q_ASSERT(fxi != NULL);
+	
+	const QLCChannel* c = fxi->channel(channel);
+	
+    return c;
 }
 
 QString EFXFixture::modeToString(Mode mode)
@@ -242,6 +348,8 @@ QString EFXFixture::modeToString(Mode mode)
             return QString(KXMLQLCEFXFixtureModeDimmer);
         case RGB:
             return QString(KXMLQLCEFXFixtureModeRGB);
+		case Custom:
+            return QString(KXMLQLCEFXFixtureModeCustom);
     }
 }
 
@@ -253,10 +361,97 @@ EFXFixture::Mode EFXFixture::stringToMode(const QString& str)
         return Dimmer;
     else if (str == QString(KXMLQLCEFXFixtureModeRGB))
         return RGB;
+	else if (str == QString(KXMLQLCEFXFixtureModeCustom))
+        return Custom;
     else
         return PanTilt;
 }
 
+quint32 EFXFixture::firstMSBChannel()
+{
+	getEFXChannels();
+	return m_firstMsbChannel;
+}
+
+quint32 EFXFixture::firstLSBChannel()
+{
+	getEFXChannels();
+	return m_firstLsbChannel;
+}
+
+quint32 EFXFixture::secondMSBChannel()
+{
+	getEFXChannels();
+	return m_secondMsbChannel;
+}
+
+quint32 EFXFixture::secondLSBChannel()
+{
+	getEFXChannels();
+	return m_secondLsbChannel;
+}
+
+quint32 EFXFixture::custXMSB()
+{
+	return m_custXMsbChannel;
+}
+
+quint32 EFXFixture::custXLSB()
+{
+	return m_custXLsbChannel;
+}
+
+quint32 EFXFixture::custYMSB()
+{
+	return m_custYMsbChannel;
+}
+
+quint32 EFXFixture::custYLSB()
+{
+	return m_custYLsbChannel;
+}
+
+void EFXFixture::getEFXChannels()
+{
+	Fixture *fxi = doc()->fixture(head().fxi);
+    switch (m_mode)
+    {
+        case PanTilt:
+        {
+            m_firstMsbChannel = fxi->channelNumber(QLCChannel::Pan, QLCChannel::MSB, head().head);
+            m_firstLsbChannel = fxi->channelNumber(QLCChannel::Pan, QLCChannel::LSB, head().head);
+            m_secondMsbChannel = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::MSB, head().head);
+            m_secondLsbChannel = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::LSB, head().head);
+        }
+        break;
+
+        case RGB:
+        break;
+
+        case Dimmer:
+        {
+            m_firstMsbChannel = fxi->channelNumber(QLCChannel::Intensity, QLCChannel::MSB, head().head);
+            if (m_firstMsbChannel != QLCChannel::invalid())
+            {
+                m_firstLsbChannel = fxi->channelNumber(QLCChannel::Intensity, QLCChannel::LSB, head().head);
+            }
+            else
+            {
+                m_firstMsbChannel = fxi->masterIntensityChannel();
+            }
+        }
+        break;
+		
+		case Custom:
+		{
+			m_firstMsbChannel = m_custXMsbChannel;
+			m_firstLsbChannel = m_custXLsbChannel;
+            m_secondMsbChannel = m_custYMsbChannel;
+            m_secondLsbChannel = m_custYLsbChannel;
+		}
+		break;
+    }
+}
 /*****************************************************************************
  * Load & Save
  *****************************************************************************/
@@ -306,6 +501,26 @@ bool EFXFixture::loadXML(QXmlStreamReader &root)
             /* Intensity - LEGACY */
             root.skipCurrentElement();
         }
+		else if (root.name() == KXMLQLCEFXFixtureCustXM)
+        {
+            /* Custom X MSB */
+            setCustXMSB(root.readElementText().toUInt());
+        }
+		else if (root.name() == KXMLQLCEFXFixtureCustXL)
+        {
+            /* Custom X LSB */
+            setCustXLSB(root.readElementText().toUInt());
+        }
+		else if (root.name() == KXMLQLCEFXFixtureCustYM)
+        {
+            /* Custom Y MSB */
+            setCustYMSB(root.readElementText().toUInt());
+        }
+		else if (root.name() == KXMLQLCEFXFixtureCustYL)
+        {
+            /* Custom Y LSB */
+            setCustYLSB(root.readElementText().toUInt());
+        }
         else
         {
             qWarning() << "Unknown EFX Fixture tag:" << root.name();
@@ -336,6 +551,15 @@ bool EFXFixture::saveXML(QXmlStreamWriter *doc) const
     doc->writeTextElement(KXMLQLCEFXFixtureDirection, Function::directionToString(m_direction));
     /* Start offset */
     doc->writeTextElement(KXMLQLCEFXFixtureStartOffset, QString::number(startOffset()));
+	
+	/* Custom X MSB */
+    doc->writeTextElement(KXMLQLCEFXFixtureCustXM, QString::number(m_custXMsbChannel));
+	/* Custom X LSB */
+    doc->writeTextElement(KXMLQLCEFXFixtureCustXL, QString::number(m_custXLsbChannel));
+	/* Custom Y MSB */
+    doc->writeTextElement(KXMLQLCEFXFixtureCustYM, QString::number(m_custYMsbChannel));
+	/* Custom Y LSB */
+    doc->writeTextElement(KXMLQLCEFXFixtureCustYL, QString::number(m_custYLsbChannel));
 
     /* End the <Fixture> tag */
     doc->writeEndElement();
@@ -450,6 +674,15 @@ void EFXFixture::start(QSharedPointer<GenericFader> fader)
             }
         }
         break;
+		
+		case Custom:
+		{
+			m_firstMsbChannel = m_custXMsbChannel;
+			m_firstLsbChannel = m_custXLsbChannel;
+            m_secondMsbChannel = m_custYMsbChannel;
+            m_secondLsbChannel = m_custYLsbChannel;
+		}
+		break;
     }
     m_started = true;
 }
@@ -532,6 +765,16 @@ void EFXFixture::nextStep(QList<Universe *> universes, QSharedPointer<GenericFad
         case Dimmer:
             //Use Y for coherence with RGB gradient.
             setPointDimmer(universes, fader, valY);
+        break;
+		
+		case Custom:
+            setPointPanTilt(universes, fader, valX, valY);
+            /* When dimmer control is enabled, drive the dimmer from the EFX cycle
+               angle, phased by this fixture's StartOffset. See EFX::dimmerLevel(). */
+            if (m_parent->dimmerControlEnabled())
+                setPointIntensity(universes, fader,
+                                  m_parent->dimmerLevel(m_parent->convertOffset(m_startOffset),
+                                                        m_currentAngle));
         break;
     }
 }
