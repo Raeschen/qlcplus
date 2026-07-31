@@ -427,7 +427,7 @@ void RGBMatrixEditor::updateColors()
         int accColors = m_matrix->algorithm()->acceptColors();
         if (accColors > 0)
         {
-            if (m_matrix->blendMode() == Universe::MaskBlend)
+             /*if (m_matrix->blendMode() == Universe::MaskBlend)
             {
                 m_matrix->setColor(0, Qt::white);
                 // Overwrite more colors only if applied.
@@ -453,7 +453,8 @@ void RGBMatrixEditor::updateColors()
                 m_mtxColor4Button->setIcon(QIcon(pm));
                 m_mtxColor5Button->setIcon(QIcon(pm));
             }
-            else if (m_controlModeCombo->currentIndex() != RGBMatrix::ControlModeRgb)
+            else  */
+			if (m_controlModeCombo->currentIndex() != RGBMatrix::ControlModeRgb)
             {
                 // Convert color 1 to grayscale for single color modes
                 uchar gray = qGray(m_matrix->getColor(0).rgb());
@@ -871,14 +872,15 @@ void RGBMatrixEditor::slotBlendModeChanged(int index)
 {
     m_matrix->setBlendMode(Universe::BlendMode(index));
 
-    if (index == Universe::MaskBlend)
-    {
-        m_mtxColor1Button->setEnabled(false);
-    }
-    else
-    {
-        m_mtxColor1Button->setEnabled(true);
-    }
+    //if (index == Universe::MaskBlend)
+    //{
+    //    m_mtxColor1Button->setEnabled(false);
+    //}
+    //else
+    //{
+    //    m_mtxColor1Button->setEnabled(true);
+    //}
+	m_mtxColor1Button->setEnabled(true);
     updateExtraOptions();
     updateColors();
     slotRestartTest();
