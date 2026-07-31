@@ -105,6 +105,8 @@ private:
     void updateModeColumn(QTreeWidgetItem* item, EFXFixture* ef);
     void updateIntensityColumn(QTreeWidgetItem* item, EFXFixture* ef);
     void updateStartOffsetColumn(QTreeWidgetItem* item, EFXFixture* ef);
+    void updateXYColumn(QTreeWidgetItem* item, EFXFixture* ef);
+    void updateCopyColumn(QTreeWidgetItem* item, EFXFixture* ef);
     void removeFixtureItem(EFXFixture* ef);
     void createSpeedDials();
     void updateSpeedDials();
@@ -115,6 +117,9 @@ private slots:
     void slotFixtureItemChanged(QTreeWidgetItem* item, int column);
     void slotFixtureModeChanged(int index);
     void slotFixtureStartOffsetChanged(int intensity);
+	void slotFixtureXChanged(int index);
+	void slotFixtureYChanged(int index);
+	void slotCopyClicked();
     void slotAddFixtureClicked();
     void slotRemoveFixtureClicked();
     void slotRaiseFixtureClicked();

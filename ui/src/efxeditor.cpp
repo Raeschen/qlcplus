@@ -47,6 +47,10 @@
 #define KColumnMode    2
 #define KColumnReverse 3
 #define KColumnStartOffset 4
+#define KColumnX 5
+#define KColumnY 6
+#define KColumnCopy 7
+#define KColumnUsedChannels 8
 
 #define PROPERTY_FIXTURE "fixture"
 #define UI_STATE_TAB_INDEX "tabIndex"
@@ -489,6 +493,8 @@ void EFXEditor::addFixtureItem(EFXFixture* ef)
 
     updateModeColumn(item, ef);
     updateStartOffsetColumn(item, ef);
+	updateXYColumn(item, ef);
+	updateCopyColumn(item, ef);
 
     updateIndices(m_tree->indexOfTopLevelItem(item),
                   m_tree->topLevelItemCount() - 1);
@@ -534,6 +540,76 @@ void EFXEditor::updateStartOffsetColumn(QTreeWidgetItem* item, EFXFixture* ef)
         spin->setProperty(PROPERTY_FIXTURE, (qulonglong) ef);
         connect(spin, SIGNAL(valueChanged(int)),
                 this, SLOT(slotFixtureStartOffsetChanged(int)));
+    }
+}
+void EFXEditor::updateXYColumn(QTreeWidgetItem* item, EFXFixture* ef)
+{
+    Q_ASSERT(item != NULL);
+    Q_ASSERT(ef != NULL);
+
+    if (m_tree->itemWidget(item, KColumnX) == NULL)
+    {
+        QComboBox* combo = new QComboBox(m_tree);
+        combo->setAutoFillBackground(true);
+        combo->addItems(ef->channelList());
+        combo->setProperty(PROPERTY_FIXTURE, (qulonglong) ef);
+        m_tree->setItemWidget(item, KColumnX, combo);
+		
+		
+		if (ef->mode() == ef->stringToMode("Custom"))
+		{
+			combo->setEnabled(true);
+		} else {
+			combo->setEnabled(false);
+		}
+        const int index = combo->findText(ef->channelToString(ef->firstMSBChannel()));
+        combo->setCurrentIndex(index);
+
+        connect(combo, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(slotFixtureXChanged(int)));
+    }
+    if (m_tree->itemWidget(item, KColumnY) == NULL)
+    {
+        QComboBox* combo = new QComboBox(m_tree);
+        combo->setAutoFillBackground(true);
+        combo->addItems(ef->channelList());
+        combo->setProperty(PROPERTY_FIXTURE, (qulonglong) ef);
+        m_tree->setItemWidget(item, KColumnY, combo);
+		
+		
+		if (ef->mode() == ef->stringToMode("Custom"))
+		{
+			combo->setEnabled(true);
+		} else {
+			combo->setEnabled(false);
+		}
+        const int index = combo->findText(ef->channelToString(ef->secondMSBChannel()));
+        combo->setCurrentIndex(index);
+
+        connect(combo, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(slotFixtureYChanged(int)));
+    }
+	
+	QString dbg;
+	dbg = QString::number(ef->firstMSBChannel()) % ", " % QString::number(ef->firstLSBChannel()) % ", " % QString::number(ef->secondMSBChannel()) % ", " % QString::number(ef->secondLSBChannel());
+	item->setText(KColumnUsedChannels, dbg);
+}
+void EFXEditor::updateCopyColumn(QTreeWidgetItem* item, EFXFixture* ef)
+{
+	Q_ASSERT(item != NULL);
+    Q_ASSERT(ef != NULL);
+	
+	if (m_tree->itemWidget(item, KColumnCopy) == NULL)
+    {
+		QToolButton* copybutton = new QToolButton(m_tree);
+		copybutton->setIcon(QIcon(":/editcopy.png"));
+		copybutton->setIconSize(QSize(16, 16));
+		copybutton->setToolTip(tr("Copy Mode/X/Y to All"));
+		copybutton->setProperty(PROPERTY_FIXTURE, (qulonglong) ef);
+        m_tree->setItemWidget(item, KColumnCopy, copybutton);
+		
+		connect(copybutton, SIGNAL(clicked()),
+            this, SLOT(slotCopyClicked()));
     }
 }
 
@@ -636,12 +712,14 @@ void EFXEditor::slotFixtureModeChanged(int index)
 {
     QComboBox *combo = qobject_cast<QComboBox*>(QObject::sender());
     Q_ASSERT(combo != NULL);
+	
 
     EFXFixture *ef = (EFXFixture*) combo->property(PROPERTY_FIXTURE).toULongLong();
     Q_ASSERT(ef != NULL);
 
     ef->setMode(ef->stringToMode (combo->itemText(index)));
-
+	
+	updateFixtureTree();
     // Restart the test after the latest mode change, delayed
     m_testTimer.start();
 }
@@ -655,11 +733,113 @@ void EFXEditor::slotFixtureStartOffsetChanged(int startOffset)
     ef->setStartOffset(startOffset);
 
     redrawPreview();
+    // Restart the test after the latest offset change, delayed
+    m_testTimer.start();
+}
+
+void EFXEditor::slotFixtureXChanged(int index)
+{
+    QComboBox *combo = qobject_cast<QComboBox*>(QObject::sender());
+    Q_ASSERT(combo != NULL);
+	
+
+    EFXFixture *ef = (EFXFixture*) combo->property(PROPERTY_FIXTURE).toULongLong();
+    Q_ASSERT(ef != NULL);
+	
+	// set it if valid
+	if(index < ef->channels())
+	{
+		ef->setCustXMSB(index);
+	
+		// check to see if the next channel is LSB type
+		const QLCChannel* c = ef->getChannel(index+1);
+		if((c != NULL) && (c->controlByte()))
+		{
+			ef->setCustXLSB(index+1);
+		} else {
+			ef->setCustXLSB(QLCChannel::invalid());
+		}
+	} 
+	else 
+	{
+		ef->setCustXMSB(QLCChannel::invalid());
+		ef->setCustXLSB(QLCChannel::invalid());
+	}
+	
+    redrawPreview();
+	
+	updateFixtureTree();
 
     // Restart the test after the latest offset change, delayed
     m_testTimer.start();
 }
 
+void EFXEditor::slotFixtureYChanged(int index)
+{
+    QComboBox *combo = qobject_cast<QComboBox*>(QObject::sender());
+    Q_ASSERT(combo != NULL);
+	
+
+    EFXFixture *ef = (EFXFixture*) combo->property(PROPERTY_FIXTURE).toULongLong();
+    Q_ASSERT(ef != NULL);
+
+	// set it if valid
+	if(index < ef->channels())
+	{
+		ef->setCustYMSB(index);
+	
+		// check to see if the next channel is LSB type
+		const QLCChannel* c = ef->getChannel(index+1);
+		if((c != NULL) && (c->controlByte()))
+		{
+			ef->setCustYLSB(index+1);
+		} else {
+			ef->setCustYLSB(QLCChannel::invalid());
+		}
+	} 
+	else 
+	{
+		ef->setCustYMSB(QLCChannel::invalid());
+		ef->setCustYLSB(QLCChannel::invalid());
+	}
+
+    redrawPreview();
+	
+	updateFixtureTree();
+
+    // Restart the test after the latest offset change, delayed
+    m_testTimer.start();
+}
+void EFXEditor::slotCopyClicked()
+{
+	// get the current fixture
+	QToolButton *copybutton = qobject_cast<QToolButton*>(QObject::sender());
+    Q_ASSERT(copybutton != NULL);
+	
+	EFXFixture *ef = (EFXFixture*) copybutton->property(PROPERTY_FIXTURE).toULongLong();
+    Q_ASSERT(ef != NULL);
+	
+	// iterate all fixtures in this efx
+	QListIterator <EFXFixture*> it(m_efx->fixtures());
+    while (it.hasNext() == true)
+	{
+		EFXFixture* efo = it.next();
+        Q_ASSERT(efo != NULL);
+		
+		//copy selected fixture's properties to all other fixtures, only if there are identical channel counts
+		if(ef->channels() == efo->channels())
+		{
+			efo->setMode(ef->mode());
+			efo->setCustXMSB(ef->custXMSB());
+			efo->setCustXLSB(ef->custXLSB());
+			efo->setCustYMSB(ef->custYMSB());
+			efo->setCustYLSB(ef->custYLSB());
+		}
+	}
+    
+	updateFixtureTree();
+	
+}
 void EFXEditor::slotAddFixtureClicked()
 {
     /* The following code is the original QLC+ code (EFX with only Pan-Tilt).
@@ -798,6 +978,8 @@ void EFXEditor::slotRaiseFixtureClicked()
 
             updateModeColumn(item, ef);
             updateStartOffsetColumn(item, ef);
+			updateXYColumn(item, ef);
+			updateCopyColumn(item, ef);
             updateIndices(index - 1, index);
             m_tree->setCurrentItem(item);
 
@@ -832,6 +1014,8 @@ void EFXEditor::slotLowerFixtureClicked()
 
             updateModeColumn(item, ef);
             updateStartOffsetColumn(item, ef);
+			updateXYColumn(item, ef);
+			updateCopyColumn(item, ef);
             updateIndices(index, index + 1);
             m_tree->setCurrentItem(item);
 
