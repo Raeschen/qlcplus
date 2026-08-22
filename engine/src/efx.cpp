@@ -498,46 +498,46 @@ void EFX::calculatePoint(float iterator, float *x, float *y) const
  * Width
  *****************************************************************************/
 
-void EFX::setWidth(int width)
+void EFX::setWidth(double width)
 {
-    adjustAttribute(static_cast<double> (CLAMP(width, 0, 127)), Width);
+    adjustAttribute(CLAMP(width, 0, 128), Width);
     emit changed(this->id());
 }
 
-int EFX::width() const
+double EFX::width() const
 {
-    return static_cast<int> (attributes().at(Width).m_value);
+    return attributes().at(Width).m_value;
 }
 
 /*****************************************************************************
  * Height
  *****************************************************************************/
 
-void EFX::setHeight(int height)
+void EFX::setHeight(double height)
 {
-    adjustAttribute(static_cast<double> (CLAMP(height, 0, 127)), Height);
+    adjustAttribute(CLAMP(height, 0, 128), Height);
     emit changed(this->id());
 }
 
-int EFX::height() const
+double EFX::height() const
 {
-    return static_cast<int> (attributes().at(Height).m_value);
+    return attributes().at(Height).m_value;
 }
 
 /*****************************************************************************
  * Rotation
  *****************************************************************************/
 
-void EFX::setRotation(int rot)
+void EFX::setRotation(double rot)
 {
-    adjustAttribute(CLAMP(rot, 0, 359), Rotation);
+    adjustAttribute(CLAMP(rot, 0, 360), Rotation);
     updateRotationCache();
     emit changed(this->id());
 }
 
-int EFX::rotation() const
+double EFX::rotation() const
 {
-    return static_cast<int> (attributes().at(Rotation).m_value);
+    return attributes().at(Rotation).m_value;
 }
 
 void EFX::updateRotationCache()
@@ -551,15 +551,15 @@ void EFX::updateRotationCache()
  * Start Offset
  *****************************************************************************/
 
-void EFX::setStartOffset(int startOffset)
+void EFX::setStartOffset(double startOffset)
 {
-    adjustAttribute(CLAMP(startOffset, 0, 359), StartOffset);
+    adjustAttribute(CLAMP(startOffset, 0, 360), StartOffset);
     emit changed(this->id());
 }
 
-int EFX::startOffset() const
+double EFX::startOffset() const
 {
-    return static_cast<int> (attributes().at(StartOffset).m_value);
+    return attributes().at(StartOffset).m_value;
 }
 
 float EFX::convertOffset(int offset) const
@@ -586,26 +586,26 @@ bool EFX::isRelative() const
  * Offset
  *****************************************************************************/
 
-void EFX::setXOffset(int offset)
+void EFX::setXOffset(double offset)
 {
-    adjustAttribute(static_cast<double> (CLAMP(offset, 0, (int)UCHAR_MAX)), XOffset);
+    adjustAttribute(offset, XOffset);
     emit changed(this->id());
 }
 
-int EFX::xOffset() const
+double EFX::xOffset() const
 {
-    return static_cast<int> (attributes().at(XOffset).m_value);
+    return attributes().at(XOffset).m_value;
 }
 
-void EFX::setYOffset(int offset)
+void EFX::setYOffset(double offset)
 {
-    adjustAttribute(static_cast<double> (CLAMP(offset, 0, (int)UCHAR_MAX)), YOffset);
+    adjustAttribute(offset, YOffset);
     emit changed(this->id());
 }
 
-int EFX::yOffset() const
+double EFX::yOffset() const
 {
-    return static_cast<int> (attributes().at(YOffset).m_value);
+    return attributes().at(YOffset).m_value;
 }
 
 /*****************************************************************************
@@ -1013,22 +1013,22 @@ bool EFX::loadXML(QXmlStreamReader &root)
         else if (root.name() == KXMLQLCEFXWidth)
         {
             /* Width */
-            setWidth(root.readElementText().toInt());
+            setWidth(root.readElementText().toDouble());
         }
         else if (root.name() == KXMLQLCEFXHeight)
         {
             /* Height */
-            setHeight(root.readElementText().toInt());
+            setHeight(root.readElementText().toDouble());
         }
         else if (root.name() == KXMLQLCEFXRotation)
         {
             /* Rotation */
-            setRotation(root.readElementText().toInt());
+            setRotation(root.readElementText().toDouble());
         }
         else if (root.name() == KXMLQLCEFXStartOffset)
         {
             /* StartOffset */
-            setStartOffset(root.readElementText().toInt());
+            setStartOffset(root.readElementText().toDouble());
         }
         else if (root.name() == KXMLQLCEFXIsRelative)
         {
@@ -1067,7 +1067,7 @@ bool EFX::loadXML(QXmlStreamReader &root)
 bool EFX::loadXMLAxis(QXmlStreamReader &root)
 {
     int frequency = 0;
-    int offset = 0;
+    double offset = 0;
     int phase = 0;
     QString axis;
 
@@ -1084,7 +1084,7 @@ bool EFX::loadXMLAxis(QXmlStreamReader &root)
     while (root.readNextStartElement())
     {
         if (root.name() == KXMLQLCEFXOffset)
-            offset = root.readElementText().toInt();
+            offset = root.readElementText().toDouble();
         else if (root.name() == KXMLQLCEFXFrequency)
             frequency = root.readElementText().toInt();
         else if (root.name() == KXMLQLCEFXPhase)

@@ -145,12 +145,12 @@ private:
      *********************************************************************/
 private slots:
     void slotAlgorithmSelected(int algoIndex);
-    void slotWidthSpinChanged(int value);
-    void slotHeightSpinChanged(int value);
-    void slotXOffsetSpinChanged(int value);
-    void slotYOffsetSpinChanged(int value);
-    void slotRotationSpinChanged(int value);
-    void slotStartOffsetSpinChanged(int value);
+    void slotWidthSpinChanged(double value);
+    void slotHeightSpinChanged(double value);
+    void slotXOffsetSpinChanged(double value);
+    void slotYOffsetSpinChanged(double value);
+    void slotRotationSpinChanged(double value);
+    void slotStartOffsetSpinChanged(double value);
     void slotIsRelativeCheckboxChanged(int value);
 
     void slotXFrequencySpinChanged(int value);
