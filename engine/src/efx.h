@@ -253,14 +253,14 @@ public:
      *
      * @param width Pattern width (0-255)
      */
-    void setWidth(int width);
+    void setWidth(double width);
 
     /**
      * Get the pattern width
      *
      * @return Pattern width (0-255)
      */
-    int width() const;
+    double width() const;
 
     /*********************************************************************
      * Height
@@ -271,14 +271,14 @@ public:
      *
      * @param height Pattern height (0-255)
      */
-    void setHeight(int height);
+    void setHeight(double height);
 
     /**
      * Get the pattern height
      *
      * @return Pattern height (0-255)
      */
-    int height() const;
+    double height() const;
 
     /*********************************************************************
      * Rotation
@@ -289,14 +289,14 @@ public:
      *
      * @param rot Pattern rotation (0-359)
      */
-    void setRotation(int rot);
+    void setRotation(double rot);
 
     /**
      * Get the pattern rotation
      *
      * @return Pattern rotation (0-359)
      */
-    int rotation() const;
+    double rotation() const;
 
 private:
     /**
@@ -308,7 +308,7 @@ private:
     /**
      * Pattern rotation, see setRotation()
      */
-    int m_rotation;
+    double m_rotation;
 
     /**
      * cached cos(m_rotation) to speed up computation
@@ -329,14 +329,14 @@ public:
      *
      * @param startOffset StartOffset of the pattern (0-359)
      */
-    void setStartOffset(int startOffset);
+    void setStartOffset(double startOffset);
 
     /**
      * Get the pattern start offset
      *
      * @return Pattern start offset (0-359)
      */
-    int startOffset() const;
+    double startOffset() const;
 
 private:
     float convertOffset(int offset) const;
@@ -374,28 +374,28 @@ public:
      *
      * @param offset Pattern offset (0-255; 127 is middle)
      */
-    void setXOffset(int offset);
+    void setXOffset(double offset);
 
     /**
      * Get the pattern offset on the X-axis
      *
      * @return Pattern offset (0-255; 127 is middle)
      */
-    int xOffset() const;
+    double xOffset() const;
 
     /**
      * Set the pattern offset on the Y-axis
      *
      * @param offset Pattern offset (0-255; 127 is middle)
      */
-    void setYOffset(int offset);
+    void setYOffset(double offset);
 
     /**
      * Get the pattern offset on the Y-axis
      *
      * @return Pattern offset (0-255; 127 is middle)
      */
-    int yOffset() const;
+    double yOffset() const;
 
     /*********************************************************************
      * Frequency

@@ -294,18 +294,18 @@ void EFXEditor::initMovementPage()
 
     connect(m_algorithmCombo, SIGNAL(activated(int)),
             this, SLOT(slotAlgorithmSelected(int)));
-    connect(m_widthSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotWidthSpinChanged(int)));
-    connect(m_heightSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotHeightSpinChanged(int)));
-    connect(m_xOffsetSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotXOffsetSpinChanged(int)));
-    connect(m_yOffsetSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotYOffsetSpinChanged(int)));
-    connect(m_rotationSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotRotationSpinChanged(int)));
-    connect(m_startOffsetSpin, SIGNAL(valueChanged(int)),
-            this, SLOT(slotStartOffsetSpinChanged(int)));
+    connect(m_widthSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotWidthSpinChanged(double)));
+    connect(m_heightSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotHeightSpinChanged(double)));
+    connect(m_xOffsetSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotXOffsetSpinChanged(double)));
+    connect(m_yOffsetSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotYOffsetSpinChanged(double)));
+    connect(m_rotationSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotRotationSpinChanged(double)));
+    connect(m_startOffsetSpin, SIGNAL(valueChanged(double)),
+            this, SLOT(slotStartOffsetSpinChanged(double)));
     connect(m_isRelativeCheckbox, SIGNAL(stateChanged(int)),
             this, SLOT(slotIsRelativeCheckboxChanged(int)));
 
@@ -1141,28 +1141,28 @@ void EFXEditor::slotAlgorithmSelected(int algoIndex)
     redrawPreview();
 }
 
-void EFXEditor::slotWidthSpinChanged(int value)
+void EFXEditor::slotWidthSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setWidth(value);
     redrawPreview();
 }
 
-void EFXEditor::slotHeightSpinChanged(int value)
+void EFXEditor::slotHeightSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setHeight(value);
     redrawPreview();
 }
 
-void EFXEditor::slotRotationSpinChanged(int value)
+void EFXEditor::slotRotationSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setRotation(value);
     redrawPreview();
 }
 
-void EFXEditor::slotStartOffsetSpinChanged(int value)
+void EFXEditor::slotStartOffsetSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setStartOffset(value);
@@ -1175,14 +1175,14 @@ void EFXEditor::slotIsRelativeCheckboxChanged(int value)
     m_efx->setIsRelative(value == Qt::Checked);
 }
 
-void EFXEditor::slotXOffsetSpinChanged(int value)
+void EFXEditor::slotXOffsetSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setXOffset(value);
     redrawPreview();
 }
 
-void EFXEditor::slotYOffsetSpinChanged(int value)
+void EFXEditor::slotYOffsetSpinChanged(double value)
 {
     Q_ASSERT(m_efx != NULL);
     m_efx->setYOffset(value);
