@@ -337,19 +337,6 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="m_rotationSpin">
-            <property name="toolTip">
-             <string>Rotation of the pattern's starting point</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="maximum">
-             <number>359</number>
-            </property>
-           </widget>
-          </item>
           <item row="11" column="1">
            <widget class="QSpinBox" name="m_xPhaseSpin">
             <property name="enabled">
@@ -438,16 +425,6 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="m_startOffsetSpin">
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="maximum">
-             <number>359</number>
-            </property>
-           </widget>
-          </item>
           <item row="12" column="0">
            <widget class="QLabel" name="m_yPhaseLabel">
             <property name="enabled">
@@ -502,45 +479,6 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="m_yOffsetSpin">
-            <property name="toolTip">
-             <string>Pattern's center point on the Y axis</string>
-            </property>
-            <property name="maximum">
-             <number>255</number>
-            </property>
-            <property name="value">
-             <number>127</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="m_widthSpin">
-            <property name="toolTip">
-             <string>Value width of the pattern</string>
-            </property>
-            <property name="maximum">
-             <number>127</number>
-            </property>
-            <property name="value">
-             <number>127</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="m_heightSpin">
-            <property name="toolTip">
-             <string>Value height of the pattern</string>
-            </property>
-            <property name="maximum">
-             <number>127</number>
-            </property>
-            <property name="value">
-             <number>127</number>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="m_rotationLabel">
             <property name="text">
@@ -548,23 +486,85 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="m_xOffsetSpin">
-            <property name="toolTip">
-             <string>Pattern's center point on the X axis</string>
-            </property>
-            <property name="maximum">
-             <number>255</number>
-            </property>
-            <property name="value">
-             <number>127</number>
-            </property>
-           </widget>
-          </item>
           <item row="16" column="0" colspan="2">
            <widget class="QCheckBox" name="m_colorCheck">
             <property name="text">
              <string>Color Background</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="m_widthSpin">
+            <property name="toolTip">
+             <string>Value width of the pattern</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>256.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="m_heightSpin">
+            <property name="toolTip">
+             <string>Value height of the pattern</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>256.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="m_xOffsetSpin">
+            <property name="toolTip">
+             <string>Pattern's center point on the X axis</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>256.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="m_yOffsetSpin">
+            <property name="toolTip">
+             <string>Pattern's center point on the Y axis</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>256.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QDoubleSpinBox" name="m_rotationSpin">
+            <property name="toolTip">
+             <string>Rotation of the pattern's starting point</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>360.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="m_startOffsetSpin">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>360.000000000000000</double>
             </property>
            </widget>
           </item>
